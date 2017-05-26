@@ -1,0 +1,16 @@
+LICENSE.txt
+MANIFEST.in
+README.rst
+setup.cfg
+setup.py
+data/data_file
+flownetwork/__init__.py
+flownetwork/flownetwork.py
+flownetwork.egg-info/PKG-INFO
+flownetwork.egg-info/SOURCES.txt
+flownetwork.egg-info/dependency_links.txt
+flownetwork.egg-info/entry_points.txt
+flownetwork.egg-info/requires.txt
+flownetwork.egg-info/top_level.txt
+sample/__init__.py
+sample/package_data.dat
