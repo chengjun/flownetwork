@@ -1,10 +1,15 @@
 # flownetwork
 
+A python package for flow network analysis https://pypi.python.org/pypi/flownetwork
 
+## import
 
 ```python
+# import packages
 from flownetwork import flownetwork as fn
 import networkx as nx
+import matplotlib.pyplot as plt
+
 print fn.__version__
 
 ```
@@ -12,6 +17,8 @@ print fn.__version__
     $version = 0.0.0.6$
 
 
+
+## flow network analysis 
 
 ```python
 help(fn.constructFlowNetwork)
@@ -31,6 +38,7 @@ help(fn.constructFlowNetwork)
 
 
 ```python
+# constructing a flow network
 demo = fn.attention_data
 gd = fn.constructFlowNetwork(demo)
 nx.draw(gd, with_labels = True)
@@ -52,6 +60,8 @@ nx.info(gd)
 
 
 ```python
+# balancing the network
+# if it is not balanced
 gh = fn.flowBalancing(gd)
 nx.info(gh)
 ```
@@ -64,13 +74,10 @@ nx.info(gh)
 
 
 
-```python
-dir(fn)
-```
-
 
 
 ```python
+# flow matrix
 m = fn.getFlowMatrix(gd)
 m
 ```
@@ -146,6 +153,8 @@ fn.getUmatrix(gd)
 
 
 ```python
+# return dissipationToSink,totalFlow,flowFromSource
+
 fn.networkDissipate(gd)
 ```
 
@@ -165,6 +174,7 @@ fn.networkDissipate(gd)
 
 
 ```python
+# flow distance
 fn.flowDistanceFromSource(gd)
 ```
 
@@ -224,6 +234,8 @@ fn.averageFlowLength(gd)
 ```
 
 
+## Plot
+
 ```python
 fig = plt.figure(figsize=(9, 9),facecolor='white')
 ax = fig.add_subplot(111)
@@ -231,10 +243,6 @@ fn.plotTree(gd,ax)
 plt.show()
 ```
 
-
-```python
-# fn.AICI(gd)
-```
 
 
 ```python
