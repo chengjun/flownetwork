@@ -2,6 +2,28 @@
 
 A python package for flow network analysis https://pypi.python.org/pypi/flownetwork
 
+
+
+## install and upgrade
+
+Open a terminal, and input:
+
+```python
+pip install flownetwork
+```
+
+if your want to ungrade to a new version, just input:
+
+```python
+pip install --upgrade flownetwork
+```
+
+if your want to uninstall, please input:
+
+```python
+pip install flownetwork
+```
+
 ## import
 
 ```python
@@ -18,7 +40,7 @@ print fn.__version__
 
 
 
-## flow network analysis 
+## flow network analysis
 
 ```python
 help(fn.constructFlowNetwork)
