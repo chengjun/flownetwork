@@ -342,6 +342,8 @@ def powerLawExponentialCutOffPlot(data, xlab, ylab):
 def DGBDPlot(data):
     '''
     plot fitted DGBD distribution
+
+    Source: Wu, L. and J. Zhang (2011), Accelerating growth and size-dependent distribution ofhuman online activities. Physical Review E, 84 (2): 026113-026117.
     '''
     t=np.array(sorted(data,key=lambda x:-x))
     r=np.array(range(1,len(data)+1))   

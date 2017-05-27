@@ -63,10 +63,30 @@ help(fn.constructFlowNetwork)
 # constructing a flow network
 demo = fn.attention_data
 gd = fn.constructFlowNetwork(demo)
-nx.draw(gd, with_labels = True)
 ```
 
+```python
+# drawing a demo network
+fig = plt.figure(figsize=(12, 8),facecolor='white')
+pos={0: np.array([ 0.2 ,  0.8]),
+ 2: np.array([ 0.2,  0.2]),
+ 1: np.array([ 0.4,  0.6]),
+ 6: np.array([ 0.4,  0.4]),
+ 4: np.array([ 0.7,  0.8]),
+ 5: np.array([ 0.7,  0.5]),
+ 3: np.array([ 0.7,  0.2 ]),
+ 'sink': np.array([ 1,  0.5]),
+ 'source': np.array([ 0,  0.5])}
+width=[float(d['weight']*1.2) for (u,v,d) in gd.edges(data=True)]
+edge_labels=dict([((u,v,),d['weight']) for u,v,d in gd.edges(data=True)])
+nx.draw_networkx_edge_labels(gd,pos,edge_labels=edge_labels, font_size = 15, alpha = .5)
+nx.draw(gd, pos, node_size = 3000, node_color = 'orange',
+        alpha = 0.2, width = width, edge_color='orange',style='solid')
+nx.draw_networkx_labels(gd,pos,font_size=18)
+plt.show()
+```
 
+![](img/flownetwork_demo.png)
 
 
 ```python
