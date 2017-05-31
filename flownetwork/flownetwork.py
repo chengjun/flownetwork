@@ -1,28 +1,29 @@
 # -*- coding: utf-8 -*-
 """
 Created on Sun Feb 22 14:19:41 2017
-It is based on the information in http://wiki.swarma.net/index.php/Python#.E6.B5.81.E7.BD.91.E7.BB.9C.E7.AE.97.E6.B3.95
+It is based on the information in 
+http://wiki.swarma.net/index.php/Python
 @author: chengjun
 """
-
+#%matplotlib inline
+import matplotlib.cm as cm
+import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
 from numpy import linalg as LA
 from numpy import delete
-import re
-import sys
-import random
-from collections import Counter
-from collections import defaultdict
+from collections import Counter, defaultdict
 from datetime import datetime as dt
 from os import listdir
 import statsmodels.api as sm
 from scipy.optimize import curve_fit
-import matplotlib.cm as cm
-import matplotlib.pyplot as plt
+import re
+import sys
+import random
+
 
 # change the version number here!
-__version__ = "$version = 0.0.0.6$"
+__version__ = "$version = 0.0.0.9$"
 
 
 def flushPrint(s):
@@ -43,7 +44,11 @@ attention_data=[['a',0],['a',1],['a',2],\
                 ['g',4],['g',5],['h',0],\
                 ['h',5],['i',6]]
 
+
+############################
 # construct flow network
+############################
+
 def constructFlowNetwork (C):
     '''
     C is an array of two dimentions, e.g., 
@@ -71,8 +76,11 @@ def constructFlowNetwork (C):
         G.add_edge(x,y,weight=j)
     return G
 
-
+###################
 # flow functions
+###################
+
+
 def flowDistanceFromSource(G): #input a balanced nx graph
     R = G.reverse()
     mapping = {'source':'sink','sink':'source'} 
@@ -122,42 +130,43 @@ def inflow(G,node):
     '''
     return outflow(G.reverse(), node)    
 
-# def flowBalancing(G):
-#     RG = G.reverse()
-#     H = G.copy()
-#     def nodeBalancing(node):
-#         outw=0
-#         for i in G.edges(node):
-#             outw+=G[i[0]][i[1]].values()[0]
-#         inw=0
-#         for i in RG.edges(node):
-#             inw+=RG[i[0]][i[1]].values()[0]
-#         deltaflow=inw-outw
-#         if deltaflow > 0:
-#             H.add_edge(node, "sink",weight=deltaflow)
-#         elif deltaflow < 0:
-#             H.add_edge("source", node, weight=abs(deltaflow))
-#         else:
-#             pass
-#     for i in G.nodes():
-#         nodeBalancing(i)
-#     if ("source", "source") in H.edges():  H.remove_edge("source", "source")    
-#     if ("sink", "sink") in H.edges(): H.remove_edge("sink", "sink")
-#     return H
+def flowBalancing1(G):
+    RG = G.reverse()
+    H = G.copy()
+    def nodeBalancing(node):
+        outw=0
+        for i in G.edges(node):
+            outw+=G[i[0]][i[1]].values()[0]
+        inw=0
+        for i in RG.edges(node):
+            inw+=RG[i[0]][i[1]].values()[0]
+        deltaflow=inw-outw
+        if deltaflow > 0:
+            H.add_edge(node, "sink",weight=deltaflow)
+        elif deltaflow < 0:
+            H.add_edge("source", node, weight=abs(deltaflow))
+        else:
+            pass
+    for i in G.nodes():
+        nodeBalancing(i)
+    if ("source", "source") in H.edges():  H.remove_edge("source", "source")    
+    if ("sink", "sink") in H.edges(): H.remove_edge("sink", "sink")
+    return H
+
 
 def flowBalancing(G):
-        H = G.copy()
-        O = G.out_degree(weight='weight')
-        I = G.reverse().out_degree(weight='weight')
-        for i in O:
-            if i =='sink' or i=='source':
-                continue
-            de = I[i]-O[i]
-            if de > 0:
-                H.add_edge(i,'sink',weight=de)
-            else:
-                H.add_edge('source',i,weight=-de)
-        return H
+    H = G.copy()
+    O = G.out_degree(weight='weight')
+    I = G.reverse().out_degree(weight='weight')
+    for i in O:
+        if i =='sink' or i=='source':
+            continue
+        de = I[i]-O[i]
+        if de > 0:
+            H.add_edge(i,'sink',weight=de)
+        elif de < 0:
+            H.add_edge('source',i,weight=-de)
+    return H
 
 def getFlowMatrix(G,nodelist=None):
     '''
@@ -215,6 +224,27 @@ def getUmatrix(G):
         U = delete(U, sourcep-1, 1)     
     return U
 
+def getAverageTimeMatrix(G):
+    '''
+    return the average time matrix
+    '''
+    H = flowBalancing(G)
+
+    hn = H.nodes()
+    hn.remove('source') 
+    hn.insert(0,'source')
+
+    m = getFlowMatrix(H,hn)
+    M = getMarkovMatrix(m)
+
+    U = getUmatrix(M)
+    T = np.dot(U , U)
+    T = np.dot(M , T)
+    K = np.divide(T,U)
+
+    return K
+
+
 def networkDissipate(G):
     '''
     return flowToSink,totalFlow,flowFromSource
@@ -250,29 +280,13 @@ def averageFlowLength(G):
         L = np.sum(U[sourcep-1,])
     return L 
 
-def getAverageTimeMatrix(G):
-    '''
-    return the average time matrix
-    '''
-    H = flowBalancing(G)
 
-    hn = H.nodes()
-    hn.remove('source') 
-    hn.insert(0,'source')
 
-    m = getFlowMatrix(H,hn)
-    M = getMarkovMatrix(m)
-
-    U = getUmatrix(M)
-    T = np.dot(U , U)
-    T = np.dot(M , T)
-    K = np.divide(T,U)
-
-    return K
-
-def AICI(G):
+def getAICI(G):
     '''
     return AI & CI
+    Source: Wu and Zhang 2013 The decentralized flow structure of clickstreams on the web. EPJB
+
     '''
     H = flowBalancing(G)
     F1=nx.to_numpy_matrix(H)
@@ -309,13 +323,29 @@ def AICI(G):
         U = delete(U, sourcep-1, 0) 
         U = delete(U, sourcep-1, 1)     
     def calculateCi(i):
-        Ci =sum(U[i,:])*sum(np.dot(F1oJ,U[:,i]))/U[i,i]
-        return Ci
+        Gi = np.sum(np.dot(F1oJ,U[:,i]))/U[i,i]
+        return np.sum(U[i,:])*Gi
+
     CI = map( lambda x:calculateCi(x),range(len(U)) )
     AI = AI.tolist()[0]
     return np.transpose(np.vstack((AI,CI)))
 
+########################
 # fitting function
+########################
+
+def log_binning(x, y, bin_count=35):
+    max_x = np.log10(max(x))
+    max_y = np.log10(max(y))
+    max_base = max([max_x,max_y])
+    xx = [i for i in x if i>0]
+    min_x = np.log10(np.min(xx))
+    bins = np.logspace(min_x,max_base,num=bin_count)
+    # Based on: http://stackoverflow.com/questions/6163334/binning-data-in-python-with-scipy-numpy
+    bin_means_y = (np.histogram(x,bins,weights=y)[0] / np.histogram(x,bins)[0])
+    bin_means_x = (np.histogram(x,bins,weights=x)[0] / np.histogram(x,bins)[0])
+    return bin_means_x,bin_means_y
+
 def powerLawExponentialCutOffPlot(data, xlab, ylab):
     '''
     Plot fitted powerLaw distribution with Exponential CutOff
@@ -358,8 +388,8 @@ def DGBDPlot(data):
     plt.plot(r, np.exp(A)*(max(r)+1-r)**b*r**a,"r-")
     plt.yscale('log')
     plt.text(max(r)/2,max(t)/50,"b=" + str(round(b,2)) + ", a=" + str(round(a,2)))
-    plt.xlabel(r'Rank ')
-    plt.ylabel(r'Frequency')
+    plt.xlabel(r'$Rank$', fontsize = 20)
+    plt.ylabel(r'$Frequency$', fontsize = 20)
 
     
 def gini_coefficient(v):
@@ -448,6 +478,10 @@ def linearRegressPlot(xdata,ydata,col,mark,xlab,ylab):
          + '$R^2$ = ' + str(np.round(r2,2)) )
     xs = np.linspace(min(xdata),max(xdata),100)
     plt.plot(xs,constant + xs*beta,color='r',linestyle='-')
+
+######################
+# Plotting Function
+######################
 
 def WebtoTree(G):
     H = flowBalancing(G)

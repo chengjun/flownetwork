@@ -4,25 +4,25 @@ Created on Sun Feb 22 14:19:41 2017
 It is based on the information in http://wiki.swarma.net/index.php/Python#.E6.B5.81.E7.BD.91.E7.BB.9C.E7.AE.97.E6.B3.95
 @author: chengjun
 """
-
+#%matplotlib inline
+import matplotlib.cm as cm
+import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
 from numpy import linalg as LA
 from numpy import delete
-import re
-import sys
-import random
-from collections import Counter
-from collections import defaultdict
+from collections import Counter, defaultdict
 from datetime import datetime as dt
 from os import listdir
 import statsmodels.api as sm
 from scipy.optimize import curve_fit
-import matplotlib.cm as cm
-import matplotlib.pyplot as plt
+import re
+import sys
+import random
+
 
 # change the version number here!
-__version__ = "$version = 0.0.0.6$"
+__version__ = "$version = 0.0.0.8$"
 
 
 def flushPrint(s):
@@ -43,7 +43,11 @@ attention_data=[['a',0],['a',1],['a',2],\
                 ['g',4],['g',5],['h',0],\
                 ['h',5],['i',6]]
 
+
+############################
 # construct flow network
+############################
+
 def constructFlowNetwork (C):
     '''
     C is an array of two dimentions, e.g., 
@@ -71,8 +75,11 @@ def constructFlowNetwork (C):
         G.add_edge(x,y,weight=j)
     return G
 
-
+###################
 # flow functions
+###################
+
+
 def flowDistanceFromSource(G): #input a balanced nx graph
     R = G.reverse()
     mapping = {'source':'sink','sink':'source'} 
@@ -122,42 +129,43 @@ def inflow(G,node):
     '''
     return outflow(G.reverse(), node)    
 
-# def flowBalancing(G):
-#     RG = G.reverse()
-#     H = G.copy()
-#     def nodeBalancing(node):
-#         outw=0
-#         for i in G.edges(node):
-#             outw+=G[i[0]][i[1]].values()[0]
-#         inw=0
-#         for i in RG.edges(node):
-#             inw+=RG[i[0]][i[1]].values()[0]
-#         deltaflow=inw-outw
-#         if deltaflow > 0:
-#             H.add_edge(node, "sink",weight=deltaflow)
-#         elif deltaflow < 0:
-#             H.add_edge("source", node, weight=abs(deltaflow))
-#         else:
-#             pass
-#     for i in G.nodes():
-#         nodeBalancing(i)
-#     if ("source", "source") in H.edges():  H.remove_edge("source", "source")    
-#     if ("sink", "sink") in H.edges(): H.remove_edge("sink", "sink")
-#     return H
+def flowBalancing1(G):
+    RG = G.reverse()
+    H = G.copy()
+    def nodeBalancing(node):
+        outw=0
+        for i in G.edges(node):
+            outw+=G[i[0]][i[1]].values()[0]
+        inw=0
+        for i in RG.edges(node):
+            inw+=RG[i[0]][i[1]].values()[0]
+        deltaflow=inw-outw
+        if deltaflow > 0:
+            H.add_edge(node, "sink",weight=deltaflow)
+        elif deltaflow < 0:
+            H.add_edge("source", node, weight=abs(deltaflow))
+        else:
+            pass
+    for i in G.nodes():
+        nodeBalancing(i)
+    if ("source", "source") in H.edges():  H.remove_edge("source", "source")    
+    if ("sink", "sink") in H.edges(): H.remove_edge("sink", "sink")
+    return H
+
 
 def flowBalancing(G):
-        H = G.copy()
-        O = G.out_degree(weight='weight')
-        I = G.reverse().out_degree(weight='weight')
-        for i in O:
-            if i =='sink' or i=='source':
-                continue
-            de = I[i]-O[i]
-            if de > 0:
-                H.add_edge(i,'sink',weight=de)
-            else:
-                H.add_edge('source',i,weight=-de)
-        return H
+    H = G.copy()
+    O = G.out_degree(weight='weight')
+    I = G.reverse().out_degree(weight='weight')
+    for i in O:
+        if i =='sink' or i=='source':
+            continue
+        de = I[i]-O[i]
+        if de > 0:
+            H.add_edge(i,'sink',weight=de)
+        elif de < 0:
+            H.add_edge('source',i,weight=-de)
+    return H
 
 def getFlowMatrix(G,nodelist=None):
     '''
@@ -270,9 +278,11 @@ def getAverageTimeMatrix(G):
 
     return K
 
-def AICI(G):
+def getAICI(G):
     '''
     return AI & CI
+    Source: Wu and Zhang 2013 The decentralized flow structure of clickstreams on the web. EPJB
+
     '''
     H = flowBalancing(G)
     F1=nx.to_numpy_matrix(H)
@@ -309,13 +319,17 @@ def AICI(G):
         U = delete(U, sourcep-1, 0) 
         U = delete(U, sourcep-1, 1)     
     def calculateCi(i):
-        Ci =sum(U[i,:])*sum(np.dot(F1oJ,U[:,i]))/U[i,i]
-        return Ci
+        Gi = np.sum(np.dot(F1oJ,U[:,i]))/U[i,i]
+        return np.sum(U[i,:])*Gi
+
     CI = map( lambda x:calculateCi(x),range(len(U)) )
     AI = AI.tolist()[0]
     return np.transpose(np.vstack((AI,CI)))
 
+########################
 # fitting function
+########################
+
 def powerLawExponentialCutOffPlot(data, xlab, ylab):
     '''
     Plot fitted powerLaw distribution with Exponential CutOff
@@ -342,6 +356,8 @@ def powerLawExponentialCutOffPlot(data, xlab, ylab):
 def DGBDPlot(data):
     '''
     plot fitted DGBD distribution
+
+    Source: Wu, L. and J. Zhang (2011), Accelerating growth and size-dependent distribution ofhuman online activities. Physical Review E, 84 (2): 026113-026117.
     '''
     t=np.array(sorted(data,key=lambda x:-x))
     r=np.array(range(1,len(data)+1))   
@@ -356,8 +372,8 @@ def DGBDPlot(data):
     plt.plot(r, np.exp(A)*(max(r)+1-r)**b*r**a,"r-")
     plt.yscale('log')
     plt.text(max(r)/2,max(t)/50,"b=" + str(round(b,2)) + ", a=" + str(round(a,2)))
-    plt.xlabel(r'Rank ')
-    plt.ylabel(r'Frequency')
+    plt.xlabel(r'$Rank$', fontsize = 20)
+    plt.ylabel(r'$Frequency$', fontsize = 20)
 
     
 def gini_coefficient(v):
@@ -446,6 +462,10 @@ def linearRegressPlot(xdata,ydata,col,mark,xlab,ylab):
          + '$R^2$ = ' + str(np.round(r2,2)) )
     xs = np.linspace(min(xdata),max(xdata),100)
     plt.plot(xs,constant + xs*beta,color='r',linestyle='-')
+
+######################
+# Plotting Function
+######################
 
 def WebtoTree(G):
     H = flowBalancing(G)
