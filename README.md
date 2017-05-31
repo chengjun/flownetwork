@@ -21,7 +21,7 @@ pip install --upgrade flownetwork
 if your want to uninstall, please input:
 
 ```python
-pip install flownetwork
+pip uninstall flownetwork
 ```
 
 ## import
