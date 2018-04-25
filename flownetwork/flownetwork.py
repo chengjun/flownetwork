@@ -102,7 +102,7 @@ def flowDistanceFromSource(G): #input a balanced nx graph
             for m,n in H.edges(i):
                 try:
                     l+=L[n]*H[m][n].values()[0]/float(T[m])
-                except Exception, e:
+                except Exception as e:
                     l = l
                     pass
             L[i]=l
