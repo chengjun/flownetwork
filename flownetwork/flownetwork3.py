@@ -150,8 +150,8 @@ def getAICI(H):
     '''
     # H = flowBalancing(G)
     F1=nx.to_numpy_matrix(H)
-    sourcep=H.nodes().index('source')
-    sinkp=H.nodes().index('sink')
+    sourcep=list(H.nodes()).index('source')
+    sinkp=list(H.nodes()).index('sink')
     F1oJ=F1[sourcep,]
     AI = F1.sum(0)
 
