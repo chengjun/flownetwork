@@ -2,7 +2,7 @@
 
 A python package for flow network analysis https://pypi.python.org/pypi/flownetwork
 
-## install the most updated github version 
+## install the most updated github version
 
 ```python
 pip install -U git+https://github.com/chengjun/flownetwork.git
@@ -33,15 +33,15 @@ pip uninstall flownetwork
 
 ```python
 # import packages
-from flownetwork import flownetwork as fn
+import flownetwork.flownetwork as fn
 import networkx as nx
 import matplotlib.pyplot as plt
 
-print fn.__version__
+print(fn.__version__)
 
 ```
 
-    $version = 0.0.0.6$
+    $version = 3.0.9$
 
 
 

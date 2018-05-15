@@ -11,10 +11,11 @@ from setuptools import setup, find_packages
 from codecs import open
 from os import path
 
+
 here = path.abspath(path.dirname(__file__))
 
 # Get the long description from the README file
-with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
+with open('README.md') as f:
     long_description = f.read()
 
 setup(
@@ -23,12 +24,13 @@ setup(
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='3.0.7',
+    version='3.1.0',
 
 
     description='flownetwork Python project',
     long_description=long_description,
-
+    long_description_content_type='text/markdown',  # This is important!
+    setup_requires=['setuptools>=38.6.0'],
     # The project's main homepage.
     url='https://github.com/chengjun/flownetwork/',
 
@@ -93,7 +95,7 @@ setup(
     # installed, specify them here.  If using Python 2.6 or less, then these
     # have to be included in MANIFEST.in as well.
     package_data={
-        'sample': ['package_data.dat'],
+        'img': ['flownetwork_demo.png','output_109_0.png'],
     },
 
     # Although 'package_data' is the preferred approach, in some case you may

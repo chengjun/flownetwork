@@ -1,6 +1,6 @@
 LICENSE.txt
 MANIFEST.in
-README.rst
+README.md
 data_file.txt
 setup.cfg
 setup.py
@@ -13,5 +13,13 @@ flownetwork.egg-info/dependency_links.txt
 flownetwork.egg-info/entry_points.txt
 flownetwork.egg-info/requires.txt
 flownetwork.egg-info/top_level.txt
+img/flownetwork_demo.png
+img/output_109_0.png
+img/output_110_0.png
+img/output_111_1.png
+img/output_112_0.png
+img/output_113_1.png
+img/output_114_1.png
+img/output_115_0.png
 sample/__init__.py
 sample/package_data.dat
