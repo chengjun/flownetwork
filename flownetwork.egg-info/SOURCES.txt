@@ -6,6 +6,7 @@ setup.py
 data/data_file
 flownetwork/__init__.py
 flownetwork/flownetwork.py
+flownetwork/flownetwork2.py
 flownetwork.egg-info/PKG-INFO
 flownetwork.egg-info/SOURCES.txt
 flownetwork.egg-info/dependency_links.txt
