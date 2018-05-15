@@ -89,7 +89,21 @@ def drawFlowNetwork(G):
                                  font_family='sans-serif', font_weight='normal', alpha=1.0, bbox=None, ax=None, rotate=True)
     plt.axis('off')
     plt.show()
-
+    
+def flowBalancing(G):
+    H = G.copy()
+    O = G.out_degree(weight='weight')
+    I = G.reverse().out_degree(weight='weight')
+    for i in O:
+        if i =='sink' or i=='source':
+            continue
+        de = I[i]-O[i]
+        if de > 0:
+            H.add_edge(i,'sink',weight=de)
+        elif de < 0:
+            H.add_edge('source',i,weight=-de)
+    return H
+    
 def flowDistanceFromSource(G): #input a balanced nx graph
     R = G.reverse()
     mapping = {'source':'sink','sink':'source'} 
