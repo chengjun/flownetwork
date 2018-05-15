@@ -231,6 +231,16 @@ def networkDissipate(G):
 # toSink,totalflow,fromSource = np.array(list(di.values())).T
 # toflow = totalflow-toSink
 
+def getFlowMatrix(G,nodelist=None):
+    '''
+    read Graph and construct flowMatrix
+    '''
+    if nodelist is None:
+        FM = nx.to_numpy_matrix(G)
+
+    FM = nx.to_numpy_matrix(G,nodelist)
+    return FM
+  
 def log_binning(x, y, bin_count=20):
     max_x = np.log10(max(x))
     max_y = np.log10(max(y))
