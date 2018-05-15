@@ -94,7 +94,7 @@ def flowBalancing(G):
     H = G.copy()
     O = G.out_degree(weight='weight')
     I = G.reverse().out_degree(weight='weight')
-    for i in O:
+    for i in dict(O).keys():
         if i =='sink' or i=='source':
             continue
         de = I[i]-O[i]
