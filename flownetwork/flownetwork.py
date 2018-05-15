@@ -23,7 +23,7 @@ import random
 
 
 # change the version number here!
-__version__ = "$version = 0.0.0.9$"
+__version__ = "$version = 0.0.1$"
 
 
 def flushPrint(s):
