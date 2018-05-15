@@ -15,7 +15,12 @@ import random
 
 
 # change the version number here!
+<<<<<<< HEAD
 __version__ = "$version = py3.0.1$"
+=======
+__version__ = "$version = 0.0.1$"
+
+>>>>>>> a20be76130f7cc277d5c3b8af1c3d9605bbc9764
 
 def flushPrint(s):
     sys.stdout.write('\r')
@@ -827,6 +832,7 @@ def draw_graph(graph, labels=None, graph_layout='shell',
     # show graph
     plt.axis('off')
     plt.show()
+<<<<<<< HEAD
 
 ######################
 # drawing network
@@ -914,3 +920,5 @@ def alloRegressPlot(xdata,ydata,col,mark,xlab,ylab, loglog):
 # ax = fig.add_subplot(2,2,4)
 # alloRegressPlot(toflow,toSink,'orange','o','$F_i$','$D_i$', True)
 # plt.tight_layout()
+=======
+>>>>>>> a20be76130f7cc277d5c3b8af1c3d9605bbc9764

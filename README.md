@@ -2,11 +2,16 @@
 
 A python package for flow network analysis https://pypi.python.org/pypi/flownetwork
 
+## install the most updated github version 
 
+```python
+pip install -U git+https://github.com/chengjun/flownetwork.git
+```
 
 ## install and upgrade
 
 Open a terminal, and input:
+
 
 ```python
 pip install flownetwork
