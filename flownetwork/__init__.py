@@ -1,4 +1,4 @@
-from flownetwork import *
+__version__ = 'py3.1.0'
 
 def main():
     """Entry point for the application script"""
