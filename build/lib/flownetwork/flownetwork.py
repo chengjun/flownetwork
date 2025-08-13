@@ -15,7 +15,7 @@ import random
 
 
 # change the version number here!
-__version__ = "$version = py3.0.1$"
+__version__ = "$version = py3.2.0$"
 
 def flushPrint(s):
     sys.stdout.write('\r')
