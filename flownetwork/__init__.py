@@ -1,4 +1,4 @@
-__version__ = 'py3.1.0'
+__version__ = 'py3.2.0'
 
 def main():
     """Entry point for the application script"""
